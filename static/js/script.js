@@ -5,7 +5,7 @@ document.getElementById('task-form').addEventListener('submit', function(event) 
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
     const due_date = document.getElementById('due_date').value;
-
+    
     // Use Fetch API to send a POST request to add a task
     fetch('/add', {
         method: 'POST',
@@ -15,7 +15,7 @@ document.getElementById('task-form').addEventListener('submit', function(event) 
         body: JSON.stringify({
             title: title,
             description: description,
-            due_date: due_date
+            due_date: due_date,
         })
     })
     .then(response => response.json())
@@ -24,8 +24,21 @@ document.getElementById('task-form').addEventListener('submit', function(event) 
         const taskList = document.getElementById('task-list');
         const newTask = document.createElement('li');
         newTask.id = data.id;
-        newTask.innerHTML = `${data.title} - ${data.description} <button onclick="deleteTask(${data.id})">Delete</button>`;
+        newTask.innerHTML = `
+            <span class="task-content ${data.completed ? 'completed' : ''}">
+                ${data.title} - ${data.description} (Due: ${data.due_date})
+            </span>
+            <div class="task-actions">
+                <input
+                    type="checkbox"
+                    id="checkbox-${data.id}"
+                    onchange="toggleTaskStatus(${data.id}, this.checked)"
+                >
+                <button onclick="deleteTask(${data.id})">Delete</button>
+            </div>
+        `;
         taskList.appendChild(newTask);
+
 
         // Clear form inputs
         document.getElementById('title').value = '';
@@ -34,6 +47,30 @@ document.getElementById('task-form').addEventListener('submit', function(event) 
     })
     .catch(error => console.error('Error:', error));
 });
+
+function toggleTaskStatus(taskId, isChecked) {
+    fetch(`/update_status/${taskId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ completed: isChecked })
+    })
+    .then(() => {
+        // Find the specific span within the li
+        const taskElement = document.getElementById(`${taskId}`); // Select the li element
+        const taskContent = taskElement.querySelector('.task-content'); // Select the span inside li
+        
+        if (isChecked) {
+            taskContent.classList.add('completed');
+        } else {
+            taskContent.classList.remove('completed');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+
 
 // Handling task deletion using Fetch API
 function deleteTask(taskId) {

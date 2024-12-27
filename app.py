@@ -29,6 +29,7 @@ def add_task():
     title = data['title']
     description = data['description']
     due_date = data['due_date']
+    completed=False
     task = Task(title=title, description=description, due_date=due_date)
     db.session.add(task)
     db.session.commit()
@@ -46,6 +47,18 @@ def delete_task(task_id):
         db.session.delete(task)
         db.session.commit()
     return '', 204
+
+@app.route('/update_status/<int:task_id>', methods=['PUT'])
+def update_status(task_id):
+    data = request.json    
+    task = Task.query.get(task_id)
+    if task:
+        task.completed = data['completed']
+        db.session.commit()
+        return '',204
+    else:
+        return jsonify({"error": "Task not found"}), 404
+
 
 def init_db():
     with app.app_context():

@@ -99,3 +99,40 @@ form input, form textarea {
         padding-left: 20px;
     }
 }
+
+/* Style for the task list item content */
+.task-content {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.task-content.completed {
+    text-decoration: line-through;
+    color: gray;
+}
+
+/* Style for the actions container (checkbox and delete button) */
+.task-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px; /* Space between checkbox and button */
+}
+
+.task-actions input[type="checkbox"] {
+    margin: 0;
+    width: 15px;
+    height: 15px;
+}
+
+.task-actions button {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.task-actions button:hover {
+    background-color: #e60000;
+}

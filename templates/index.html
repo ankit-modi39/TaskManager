@@ -19,12 +19,24 @@
     <h2>Tasks</h2>
     <ul id="task-list">
         {% for task in tasks %}
-        <li id="{{ task.id }}">{{ task.title }} - {{ task.description }}
-            <button onclick="deleteTask('{{ task.id }}')">Delete</button>
+        <li id="{{ task.id }}">
+            <span class="task-content {{ 'completed' if task.completed else '' }}">
+                {{ task.title }} - {{ task.description }} (Due: {{ task.due_date }})
+            </span>
+            <div class="task-actions">
+                <input
+                    type="checkbox"
+                    id="checkbox-{{ task.id }}"
+                    {% if task.completed %}checked{% endif %}
+                    onchange="toggleTaskStatus('{{ task.id }}', this.checked)"
+                >
+                <button onclick="deleteTask('{{ task.id }}')">Delete</button>
+            </div>
         </li>
         {% endfor %}
     </ul>
+    
 
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=3"></script>
 </body>
 </html>
