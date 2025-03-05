@@ -1,4 +1,4 @@
-/* Reset some basic styles */
+/* Reset some basic styles
 * {
     margin: 0;
     padding: 0;
@@ -85,7 +85,8 @@ form input, form textarea {
     margin-bottom: 10px;
 }
 
-/* Responsive design */
+/* Responsive design 
+
 @media (max-width: 768px) {
     body {
         padding: 10px;
@@ -100,7 +101,7 @@ form input, form textarea {
     }
 }
 
-/* Style for the task list item content */
+/* Style for the task list item content 
 .task-content {
     display: inline-block;
     margin-right: 10px;
@@ -111,11 +112,11 @@ form input, form textarea {
     color: gray;
 }
 
-/* Style for the actions container (checkbox and delete button) */
+/* Style for the actions container (checkbox and delete button) 
 .task-actions {
     display: inline-flex;
     align-items: center;
-    gap: 5px; /* Space between checkbox and button */
+    gap: 5px; /* Space between checkbox and button 
 }
 
 .task-actions input[type="checkbox"] {
@@ -135,4 +136,367 @@ form input, form textarea {
 
 .task-actions button:hover {
     background-color: #e60000;
+}
+
+/* General Styles 
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navigation Bar 
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+}
+
+.nav-left h1 {
+    margin: 0;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.nav-right a,
+.dropbtn {
+    color: white;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 10px;
+    text-decoration: none;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Main Content 
+main {
+    padding: 20px;
+}
+
+#task-form-section,
+#task-list-section {
+    margin-bottom: 30px;
+}
+
+/* Task List 
+#task-list {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#task-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.task-content.completed {
+    text-decoration: line-through; /* Strike-through for completed tasks 
+    color:gray
+} */
+
+/* General Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Navigation Styles */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+}
+
+.nav-left h1 {
+    font-size: 1.5rem;
+}
+
+.nav-right a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.nav-right a:hover {
+    background-color: #555;
+}
+
+/* Dropdown Menu */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 8px 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    transition: background-color 0.3s;
+}
+
+.dropdown-content a:hover {
+    background-color: #f1f1f1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+}
+
+/* Main Content */
+main {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+section {
+    margin-bottom: 30px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+textarea {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #3e8e41;
+}
+
+/* Task List Styles */
+#task-list {
+    list-style-type: none;
+}
+
+#task-list li {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#task-list li:last-child {
+    border-bottom: none;
+}
+
+.task-content {
+    flex-grow: 1;
+}
+
+.task-content.completed {
+    text-decoration: line-through;
+    color: #888;
+}
+
+.task-actions {
+    display: flex;
+    align-items: center;
+}
+
+.task-actions input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.task-actions button {
+    background-color: #f44336;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.task-actions button:hover {
+    background-color: #d32f2f;
+}
+
+/* Flash Messages */
+.flash-messages {
+    margin-bottom: 20px;
+}
+
+.flash-message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    color: white;
+}
+
+.flash-message.error {
+    background-color: #f44336;
+}
+
+.flash-message.success {
+    background-color: #4CAF50;
+}
+
+.flash-message.info {
+    background-color: #2196F3;
+}
+
+/* Auth Forms */
+.auth-form {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.auth-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.auth-links {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.auth-links a {
+    color: #4CAF50;
+    text-decoration: none;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .nav-left h1 {
+        font-size: 1.2rem;
+    }
+    
+    main {
+        padding: 10px;
+    }
+    
+    section {
+        padding: 15px;
+    }
+    
+    #task-list li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .task-actions {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: flex-end;
+    }
 }

@@ -1,12 +1,18 @@
 from database import db  # Import the db object from app.py
+from datetime import datetime
+from sqlalchemy.sql import func
 
 class Task(db.Model):
+    __tablename__ = 'tasks'  # Explicit table name for clarity
+
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    # description = db.Column(db.String(300), nullable=False)
-    # due_date = db.Column(db.String(20), nullable=True)
-    completed = db.Column(db.Boolean, default=False)
-    description = db.Column(db.Text)
-    due_date = db.Column(db.String(10))  # Store as YYYY-MM-DD
+    title = db.Column(db.String(200), nullable=False)  # Task title
+    description = db.Column(db.Text, nullable=True)  # Optional task description
+    completed = db.Column(db.Boolean, default=False)  # Task completion status
+    due_date = db.Column(db.Date,nullable=True)
+    created_at = db.Column(db.DateTime, default=func.now())
+    updated_at = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Foreign key to User
+
     def __repr__(self):
-        return f'<Task {self.title}>'
+        return f"<Task {self.title}>"

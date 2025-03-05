@@ -1,0 +1,23 @@
+<header>
+    <nav>
+        <div class="nav-left">
+            <a href="{{ url_for('tasks.index') }}">Task Manager</a>
+        </div>
+        <div class="nav-right">
+            {% if current_user.is_authenticated %}
+                <!-- Dropdown for logged-in user -->
+                <div class="dropdown">
+                    <button class="dropbtn">{{ current_user.name }}</button>
+                    <div class="dropdown-content">
+                        <a href="{{ url_for('auth.profile') }}">Profile</a>
+                        <a href="{{ url_for('auth.logout') }}">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Login and Signup links for guests -->
+                <a href="{{ url_for('auth.login') }}">Login</a>
+                <a href="{{ url_for('auth.signup') }}">Signup</a>
+            {% endif %}
+        </div>
+    </nav>
+</header>

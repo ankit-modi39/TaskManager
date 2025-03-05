@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Profile - Task Manager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include 'partials/header.html' %}
+
+    <main>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="profile-section">
+            <h2>User Profile</h2>
+            
+            <div class="profile-info">
+                <div class="profile-field">
+                    <strong>Name:</strong>
+                    <span>{{ current_user.name }}</span>
+                </div>
+                
+                <div class="profile-field">
+                    <strong>Email:</strong>
+                    <span>{{ current_user.email }}</span>
+                </div>
+                
+                <div class="profile-field">
+                    <strong>Account Type:</strong>
+                    <span>{{ current_user.oauth_provider|capitalize }}</span>
+                </div>
+                
+                <div class="profile-field">
+                    <strong>Tasks:</strong>
+                    <span>{{ current_user.tasks|length }}</span>
+                </div>
+            </div>
+            
+            {% if current_user.oauth_provider == 'local' %}
+            <div class="profile-actions">
+                <h3>Update Password</h3>
+                <form method="POST" action="{{ url_for('auth.update_password') }}" class="update-password-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="password" name="current_password" placeholder="Current Password" required>
+                    <input type="password" name="new_password" placeholder="New Password" required>
+                    <input type="password" name="confirm_password" placeholder="Confirm New Password" required>
+                    <button type="submit">Update Password</button>
+                </form>
+            </div>
+            {% endif %}
+            
+            <div class="danger-zone">
+                <h3>Danger Zone</h3>
+                <form method="POST" action="{{ url_for('auth.delete_account') }}" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="delete-account-btn">Delete Account</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    {% include 'partials/footer.html' %}
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

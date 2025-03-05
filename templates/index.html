@@ -1,42 +1,154 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!- Navigation Bar 
+    <nav>
+        <div class="nav-left">
+            <h1>Task Manager</h1>
+        </div>
+        <div class="nav-right">
+            {% if current_user.is_authenticated %}
+                <!- Dropdown for logged-in user 
+                <div class="dropdown">
+                    <button class="dropbtn">{{ current_user.name }}</button>
+                    <div class="dropdown-content">
+                        <a href="/profile">Profile</a>
+                        <a href="/logout">Logout</a>
+                    </div>
+                </div>
+            {% else %}
+                <!- Login and Signup links for guests --
+                <a href="/login">Login</a>
+                <a href="/signup">Signup</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!- Main Content --
+    <main>
+        <!- Task Form --
+        <section id="task-form-section">
+            <h2>Add a New Task</h2>
+            <form id="task-form" method="POST" action="/add_task">
+                {{ csrf_token() }}
+                <input type="text" id="title" name="title" placeholder="Task Title" required><br>
+                <textarea id="description" name="description" placeholder="Task Description" required></textarea><br>
+                <input type="date" id="due_date" name="due_date"><br>
+                <button type="submit">Add Task</button>
+            </form>
+        </section>
+
+        <!- Task List 
+        <section id="task-list-section">
+            <h2>Your Tasks</h2>
+            {% if tasks %}
+                <ul id="task-list">
+                    {% for task in tasks %}
+                    <li id="{{ task.id }}" class="{{ 'completed' if task.completed else '' }}">
+                        <!- Task Details 
+                        <span class="task-content">
+                            {{ task.title }} - {{ task.description }} (Due: {{ task.due_date }})
+                        </span>
+
+                        <!- Task Actions 
+                        <div class="task-actions">
+                            <!- Toggle Completion 
+                            <input
+                                type="checkbox"
+                                id="checkbox-{{ task.id }}"
+                                {% if task.completed %}checked{% endif %}
+                                onchange="toggleTaskStatus('{{ task.id }}', this.checked)"
+                            >
+                            <!- Delete Task 
+                            <button onclick="deleteTask('{{ task.id }}')">Delete</button>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No tasks available. Add a new task above!</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <!- JavaScript 
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
+ -->
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Task Manager</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>Task Manager</h1>
+    {% include 'partials/header.html' %}
 
-    <form id="task-form">
-        <input type="text" id="title" name="title" placeholder="Task Title" required><br>
-        <textarea id="description" name="description" placeholder="Task Description" required></textarea><br>
-        <input type="text" id="due_date" name="due_date" placeholder="Due Date"><br>
-        <button type="submit">Add Task</button>
-    </form>
+    <main>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
 
-    <h2>Tasks</h2>
-    <ul id="task-list">
-        {% for task in tasks %}
-        <li id="{{ task.id }}">
-            <span class="task-content {{ 'completed' if task.completed else '' }}">
-                {{ task.title }} - {{ task.description }} (Due: {{ task.due_date }})
-            </span>
-            <div class="task-actions">
-                <input
-                    type="checkbox"
-                    id="checkbox-{{ task.id }}"
-                    {% if task.completed %}checked{% endif %}
-                    onchange="toggleTaskStatus('{{ task.id }}', this.checked)"
-                >
-                <button onclick="deleteTask('{{ task.id }}')">Delete</button>
-            </div>
-        </li>
-        {% endfor %}
-    </ul>
-    
+        <!-- Task Form -->
+        <section id="task-form-section">
+            <h2>Add a New Task</h2>
+            <form id="task-form" method="POST">
+                <input type="text" id="title" name="title" placeholder="Task Title" required>
+                <textarea id="description" name="description" placeholder="Task Description" required></textarea>
+                <input type="date" id="due_date" name="due_date">
+                <button type="submit">Add Task</button>
+            </form>
+        </section>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}?v=3"></script>
+        <!-- Task List -->
+        <section id="task-list-section">
+            <h2>Your Tasks</h2>
+            {% if tasks %}
+                <ul id="task-list">
+                    {% for task in tasks %}
+                    <li id="{{ task.id }}" class="{{ 'completed' if task.completed else '' }}">
+                        <span class="task-content {{ 'completed' if task.completed else '' }}">
+                            {{ task.title }} - {{ task.description }} (Due: {{ task.due_date or 'None' }})
+                        </span>
+                        <div class="task-actions">
+                            <input
+                                type="checkbox"
+                                id="checkbox-{{ task.id }}"
+                                {% if task.completed %}checked{% endif %}
+                                onchange="toggleTaskStatus('{{ task.id }}', this.checked)"
+                            >
+                            <button onclick="deleteTask('{{ task.id }}')">Delete</button>
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No tasks available. Add a new task above!</p>
+            {% endif %}
+        </section>
+    </main>
+
+    {% include 'partials/footer.html' %}
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
