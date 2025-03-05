@@ -97,6 +97,7 @@
     {% include 'partials/header.html' %}
 
     <main>
+        <div class="notification-container"></div>
         <!-- Flash Messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -142,7 +143,9 @@
                     {% endfor %}
                 </ul>
             {% else %}
+            <div class="no-tasks-message">
                 <p>No tasks available. Add a new task above!</p>
+            </div>
             {% endif %}
         </section>
     </main>
