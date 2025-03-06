@@ -1,4 +1,4 @@
-from database import db  # Import the db object from app.py
+from extensions import db  # Changed from database import db
 from datetime import datetime
 from sqlalchemy.sql import func
 

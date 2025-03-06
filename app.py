@@ -108,30 +108,22 @@
 
 
 from flask import Flask, render_template
-from flask_login import LoginManager
-from database import db
+from extensions import db, login_manager, mail, csrf, limiter
 import os
 from models.user import User
 from auth.local_auth import auth as auth_blueprint
 from auth.oauth import oauth as oauth_blueprint
 from routes.task_routes import task_routes
-from flask_wtf.csrf import CSRFProtect
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 
 # Initialize Flask app
 app = Flask(__name__)
 
-# Initialize Limiter
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=["200 per day", "50 per hour"]
-)
-
+# Set up the database path exactly as in your original code
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-DATABASE_PATH = os.path.join(BASE_DIR, 'instance/task_manager.db')
+DATABASE_PATH = os.path.join(BASE_DIR, 'instance/task_manager.db')  # Use the slash in the path
 
+
+# Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DATABASE_PATH}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key')
@@ -143,19 +135,26 @@ app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 
-# Initialize CSRF protection
-csrf = CSRFProtect(app)
+# Mail settings
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'true').lower() in ['true', 'on', '1']
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER')
 
-# Create the instance directory if it doesn't exist
+# Create the instance directory if it doesn't exist - do this AFTER setting the URI but BEFORE initializing db
 os.makedirs(os.path.dirname(DATABASE_PATH), exist_ok=True)
 
-# Initialize the database with the app
+# Initialize extensions in the correct order
 db.init_app(app)
-
-# Initialize Flask-Login
-login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
 login_manager.init_app(app)
+mail.init_app(app)
+csrf.init_app(app)
+limiter.init_app(app)
+
+# Login manager configuration
+login_manager.login_view = 'auth.login'
 
 @login_manager.user_loader
 def load_user(user_id):

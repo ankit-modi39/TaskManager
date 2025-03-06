@@ -1,7 +1,7 @@
 from flask import Blueprint, redirect, url_for, current_app, request
 from flask_login import login_user
 from models.user import User
-from database import db
+from extensions import db
 from authlib.integrations.flask_client import OAuth
 
 oauth = Blueprint('oauth', __name__)

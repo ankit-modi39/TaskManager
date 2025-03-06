@@ -1,25 +1,18 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from models.user import User
-from database import db
+from extensions import db, limiter
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 from utils.validators import validate_password
 from models.task import Task
+from utils.email import send_verification_email
+from datetime import datetime
+
 
 auth = Blueprint('auth', __name__)
 
-# Create a limiter instance that will be initialized later
-limiter = Limiter(get_remote_address)
-
-@auth.record_once
-def on_load(state):
-    # Initialize limiter with the Flask app
-    limiter.init_app(state.app)
-
-
 @auth.route('/signup', methods=['GET', 'POST'])
+@limiter.limit("10 per hour")
 def signup():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -35,12 +28,21 @@ def signup():
             flash('Email already exists')
             return redirect(url_for('auth.signup'))
             
-        new_user = User(email=email, name=name, oauth_provider='local')
+        new_user = User(
+            email=email, 
+            name=name, 
+            oauth_provider='local',
+            email_verified=False  #set to false by default
+            )
         new_user.set_password(password)
         
         db.session.add(new_user)
         db.session.commit()
-        
+
+        #send verification email
+        send_verification_email(new_user)
+        flash('Please check your email to verify your account', 'info')
+
         return redirect(url_for('auth.login'))
     
     return render_template('auth/signup.html')
@@ -54,6 +56,9 @@ def login():
         
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
+            if not user.email_verified and user.oauth_provider== 'local':
+                flash('Please verify your email before logging in', 'error')
+                return redirect(url_for('auth.login'))
             login_user(user)
             return redirect(url_for('tasks.index'))
             
@@ -120,3 +125,48 @@ def delete_account():
     flash('Your account has been deleted', 'info')
     return redirect(url_for('auth.login'))
 
+@auth.route('/verify/<token>')
+def verify_email(token):
+    user = User.query.filter_by(verification_token=token).first()
+    
+    if not user:
+        flash('Invalid verification link', 'error')
+        return redirect(url_for('auth.login'))
+        
+    if user.token_expiration < datetime.now():
+        flash('Verification link has expired. Please request a new one', 'error')
+        return redirect(url_for('auth.login'))
+    
+    user.email_verified = True
+    user.verification_token = None
+    user.token_expiration = None  # Clear the expiration time
+    db.session.commit()
+    
+    flash('Email verified successfully! You can now log in', 'success')
+    return redirect(url_for('auth.login'))
+
+
+@auth.route('/resend-verification')
+def resend_verification():
+    if current_user.is_authenticated:
+        return redirect(url_for('tasks.index'))
+        
+    return render_template('auth/resend_verification.html')
+
+@auth.route('/resend-verification', methods=['POST'])
+@limiter.limit("3 per hour")
+def resend_verification_post():
+    email = request.form.get('email')
+    user = User.query.filter_by(email=email).first()
+    
+    if not user:
+        flash('Email not found', 'error')
+        return redirect(url_for('auth.resend_verification'))
+        
+    if user.email_verified:
+        flash('Email already verified', 'info')
+        return redirect(url_for('auth.login'))
+        
+    send_verification_email(user)
+    flash('Verification email sent. Please check your inbox', 'success')
+    return redirect(url_for('auth.login'))

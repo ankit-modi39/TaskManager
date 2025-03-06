@@ -1,7 +1,7 @@
 from flask import request, jsonify, abort, render_template, flash, redirect, url_for
 from flask_login import current_user, login_required
 from models.task import Task
-from database import db
+from extensions import db
 from routes import task_routes
 from utils.validators import validate_task_input
 from datetime import datetime

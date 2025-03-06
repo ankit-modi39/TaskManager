@@ -1,4 +1,4 @@
-from database import db
+from extensions import db
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -12,6 +12,9 @@ class User(UserMixin, db.Model):
     tasks = db.relationship('Task', backref='user', lazy=True)  # Relationship with Task model
     oauth_id = db.Column(db.String(100))  # ID from OAuth provider
     oauth_provider = db.Column(db.String(20), nullable=True)  # 'google' or 'local'
+    email_verified = db.Column(db.Boolean, default=False)
+    verification_token = db.Column(db.String(100))
+    token_expiration = db.Column(db.DateTime)
 
     def set_password(self, password):
         """Hashes and sets the user's password."""
